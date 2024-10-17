@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Catch the Coin</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background-color: #f0f0f0;
+    font-family: Arial, sans-serif;
+}
+
+#gameArea {
+    position: relative;
+    width: 400px;
+    height: 400px;
+    background-color: #add8e6;
+    border: 2px solid #333;
+    overflow: hidden;
+}
+
+#player {
+    position: absolute;
+    width: 40px;
+    height: 40px;
+    background-color: #ff6347;
+    border-radius: 50%;
+    left: 50%;
+    bottom: 10px;
+    transform: translateX(-50%);
+}
+
+#coin {
+    position: absolute;
+    width: 20px;
+    height: 20px;
+    background-color: #ffd700;
+    border-radius: 50%;
+}
+
+#score {
+    margin-top: 20px;
+    font-size: 24px;
+}
+
+    </style>
+</head>
+<body>
+    <div id="gameArea">
+        <div id="player"></div>
+        <div id="coin"></div>
+    </div>
+    <div id="score">Score: 0</div>
+
+    <script >
+     const player = document.getElementById('player');
+const coin = document.getElementById('coin');
+const scoreDisplay = document.getElementById('score');
+
+let score = 0;
+let playerX = 180;
+let playerSpeed = 102;
+let coinY = 0;
+let coinSpeed = 7; // Speed of falling coin
+
+// Update player position
+document.addEventListener('keydown', (e) => {
+    if (e.key === 'ArrowLeft' && playerX > 0) {
+        playerX -= playerSpeed;
+    } else if (e.key === 'ArrowRight' && playerX < 360) {
+        playerX += playerSpeed;
+    }
+    player.style.left = `${playerX}px`;
+});
+
+// Coin random horizontal position (when resetting position)
+function randomPosition() {
+    const x = Math.floor(Math.random() * 380);
+    coin.style.left = `${x}px`;
+    coinY = 0; // Reset coin to the top
+}
+
+// Check if player catches the coin
+function checkCollision() {
+    const playerRect = player.getBoundingClientRect();
+    const coinRect = coin.getBoundingClientRect();
+
+    if (
+        playerRect.x < coinRect.x + coinRect.width &&
+        playerRect.x + playerRect.width > coinRect.x &&
+        playerRect.y < coinRect.y + coinRect.height &&
+        playerRect.y + playerRect.height > coinRect.y
+    ) {
+        score++;
+        scoreDisplay.innerText = `Score: ${score}`;
+        randomPosition();
+    }
+}
+
+// Game loop to move the coin down
+function gameLoop() {
+    // Move the coin down
+    coinY += coinSpeed;
+    coin.style.top = `${coinY}px`;
+
+    // If coin reaches the bottom, reset to the top at a random position
+    if (coinY > 380) {
+        randomPosition();
+    }
+
+    checkCollision(); // Check if player caught the coin
+    requestAnimationFrame(gameLoop); // Keep the game loop running
+}
+
+// Start game
+randomPosition(); // Set initial position of the coin
+gameLoop(); // Start the game loop
+
+
+    </script>
+</body>
+</html>
