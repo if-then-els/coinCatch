@@ -64,23 +64,34 @@ body {
     <div id="score">Score: 0</div>
 
     <script >
-     const player = document.getElementById('player');
+ const player = document.getElementById('player');
 const coin = document.getElementById('coin');
 const scoreDisplay = document.getElementById('score');
 
 let score = 0;
 let playerX = 180;
-let playerSpeed = 102;
+let playerSpeed = 10;
 let coinY = 0;
-let coinSpeed = 7; // Speed of falling coin
+let coinSpeed = 2; // Speed of falling coin
 
-// Update player position
+// Update player position for keyboard controls
 document.addEventListener('keydown', (e) => {
     if (e.key === 'ArrowLeft' && playerX > 0) {
         playerX -= playerSpeed;
     } else if (e.key === 'ArrowRight' && playerX < 360) {
         playerX += playerSpeed;
     }
+    player.style.left = `${playerX}px`;
+});
+
+// Touch control for mobile devices
+document.getElementById('gameArea').addEventListener('touchmove', (e) => {
+    // Get touch position relative to the game area
+    const touchX = e.touches[0].clientX;
+    const gameAreaRect = document.getElementById('gameArea').getBoundingClientRect();
+
+    // Move player to the touch position (keeping the player within bounds)
+    playerX = Math.min(Math.max(touchX - gameAreaRect.left - 20, 0), 360);
     player.style.left = `${playerX}px`;
 });
 
@@ -126,6 +137,7 @@ function gameLoop() {
 // Start game
 randomPosition(); // Set initial position of the coin
 gameLoop(); // Start the game loop
+
 
 
     </script>
